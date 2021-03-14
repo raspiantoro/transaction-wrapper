@@ -1,9 +1,13 @@
 package model
 
 type Profile struct {
-	ID        string `db:"id"`
-	Age       uint64 `db:"age"`
-	FirstName string `db:"first_name"`
-	LastName  string `db:"last_name"`
-	UserID    string `db:"user_id"`
+	ID        string `gorm:"column:id"`
+	Age       uint64 `gorm:"column:age"`
+	FirstName string `gorm:"column:first_name"`
+	LastName  string `gorm:"column:last_name"`
+	UserID    string `gorm:"column:userId"`
+}
+
+func (Profile) TableName() string {
+	return "profile"
 }

@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/raspiantoro/transaction-wrapper/internal/app/model"
+	"github.com/raspiantoro/transaction-wrapper/internal/app/payload"
 )
 
 type PersonService interface {
-	GetPerson(ctx context.Context) ([]model.Person, error)
+	GetPerson(ctx context.Context, ID string) (payload.GetPersonResponses, error)
+	GetPersons(ctx context.Context) (payload.GetPersonsResponses, error)
 }

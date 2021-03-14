@@ -5,7 +5,7 @@ import (
 )
 
 type ServiceOptions struct {
-	PersonRepository repository.PersonRepository
+	Repository repository.Repository
 }
 
 type Service struct {

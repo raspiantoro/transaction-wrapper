@@ -16,7 +16,12 @@ func Run() {
 
 	appContext := appcontext.New()
 
-	repo := appContext.GetRepository()
+	db, err := appContext.GetDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repo := appContext.GetRepository(db)
 	svc := appContext.GetService(repo)
 	handler := appContext.GetHandler(svc)
 	r := appContext.GetRouter(handler)

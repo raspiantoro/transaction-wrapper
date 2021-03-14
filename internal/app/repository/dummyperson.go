@@ -1,11 +1,14 @@
 package repository
 
-import "github.com/raspiantoro/transaction-wrapper/internal/app/model"
+import (
+	"github.com/raspiantoro/transaction-wrapper/internal/app/driver"
+	"github.com/raspiantoro/transaction-wrapper/internal/app/model"
+)
 
 type DummyPersonRepository struct {
 }
 
-func NewDummyPersonRepository() PersonRepository {
+func NewDummyPersonRepository(db *driver.Database) PersonRepository {
 	return new(DummyPersonRepository)
 }
 
