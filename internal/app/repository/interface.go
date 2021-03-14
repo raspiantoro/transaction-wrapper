@@ -11,14 +11,11 @@ type PersonRepository interface {
 }
 
 type UserRepository interface {
-	GetUser(ctx context.Context, ID string) (user model.User, err error)
-	GetUsers(ctx context.Context) (users []model.User, err error)
-	CreateUser(ctx context.Context, user model.User) (err error)
+	GetUser(ctx context.Context, ID string, opts ...RepositoryFnOptions) (user model.User, err error)
+	GetUsers(ctx context.Context, opts ...RepositoryFnOptions) (users []model.User, err error)
+	CreateUser(ctx context.Context, user *model.User, opts ...RepositoryFnOptions) (err error)
 }
 
 type ProfileRepository interface {
-	GetProfile(ctx context.Context, ID uint64) (profile model.Profile, err error)
-	GetProfiles(ctx context.Context) (profiles []model.Profile, err error)
-	GetProfleByUserID(ctx context.Context, userID uint64) (profile model.Profile, err error)
-	CreateProfile(ctx context.Context, profile model.Profile) (err error)
+	CreateProfile(ctx context.Context, profile *model.Profile, opts ...RepositoryFnOptions) (err error)
 }

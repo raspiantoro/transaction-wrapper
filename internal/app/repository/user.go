@@ -18,16 +18,37 @@ func NewUserRepository(opt RepositoryOption) UserRepository {
 	return r
 }
 
-func (u *userRepository) GetUser(ctx context.Context, ID string) (user model.User, err error) {
-	err = u.DB.Instance.Preload("Profile").First(&user, "id", ID).Error
+func (u *userRepository) GetUser(ctx context.Context, ID string, opts ...RepositoryFnOptions) (user model.User, err error) {
+	m := &MethodOption{
+		RepositoryOption: u.RepositoryOption,
+	}
+
+	setMethodOption(m, opts...)
+
+	err = m.getDB().Preload("Profile").First(&user, "id", ID).Error
 	return
 }
 
-func (u *userRepository) GetUsers(ctx context.Context) (users []model.User, err error) {
-	err = u.DB.Instance.Preload("Profile").Find(&users).Debug().Error
+func (u *userRepository) GetUsers(ctx context.Context, opts ...RepositoryFnOptions) (users []model.User, err error) {
+	m := &MethodOption{
+		RepositoryOption: u.RepositoryOption,
+	}
+
+	setMethodOption(m, opts...)
+
+	err = m.getDB().Preload("Profile").Find(&users).Debug().Error
 	return
 }
 
-func (u *userRepository) CreateUser(ctx context.Context, user model.User) (err error) {
+func (u *userRepository) CreateUser(ctx context.Context, user *model.User, opts ...RepositoryFnOptions) (err error) {
+
+	m := &MethodOption{
+		RepositoryOption: u.RepositoryOption,
+	}
+
+	setMethodOption(m, opts...)
+
+	err = m.getDB().Create(user).Error
+
 	return
 }

@@ -5,10 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/raspiantoro/transaction-wrapper/internal/app/payload"
+	"gorm.io/gorm"
 )
 
 func (h *Handler) PersonHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,20 +58,31 @@ func (h *Handler) getOnePerson(w http.ResponseWriter, r *http.Request) {
 	id, ok := idCtx.(string)
 	if !ok {
 		err = errors.New("invalid userid")
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 	}
 
 	person, err := h.service.Person.GetPerson(ctx, id)
+	if err == gorm.ErrRecordNotFound {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("oops...something bad happen"))
+		return
 	}
 
 	data, err := json.Marshal(person)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -92,15 +107,25 @@ func (h *Handler) getAllPerson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	person, err := h.service.Person.GetPersons(ctx)
+	if err == gorm.ErrRecordNotFound {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("oops...something bad happen"))
+		return
 	}
 
 	data, err := json.Marshal(person)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -108,6 +133,46 @@ func (h *Handler) getAllPerson(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) createPerson(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	var req payload.CreatePersonRequests
+	err = json.Unmarshal(body, &req)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	// change to CreatePerson, to test without transaction
+	err = h.service.Person.CreatePersonTx(ctx, req)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("oops...something bad happen"))
+		return
+	}
+
+	data := payload.CreatePersonResponses{
+		Message: "Create Person Success",
+	}
+
+	resp, err := json.Marshal(data)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("oops...something bad happen"))
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Create Person Success"))
+	w.Write(resp)
 }

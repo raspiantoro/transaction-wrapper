@@ -54,10 +54,14 @@ func (actx *AppContext) GetRepository(db *driver.Database) repository.Repository
 	repoOption := repository.RepositoryOption{
 		DB: db,
 	}
+
 	userRepo := repository.NewUserRepository(repoOption)
+	profileRepo := repository.NewProfileRepository(repoOption)
 
 	repo := repository.Repository{
-		User: userRepo,
+		DB:      db,
+		User:    userRepo,
+		Profile: profileRepo,
 	}
 
 	return repo
