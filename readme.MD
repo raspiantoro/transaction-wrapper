@@ -6,6 +6,14 @@ This example is shows you how to perform transactions between repository in gola
 ## Migrations
 This project have no database migrations, run `./sql/db.sql` manually on your mysql database
 
+## How to run
+```bash
+go run main.go
+```
+Service will run on port `8080`
+
+PS: don't forget to modify your db configuration on `transaction-wrapper.toml`
+
 ## Test Endpoint
 Import postman collection from `./postman` directory
 
