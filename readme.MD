@@ -7,7 +7,7 @@ This example is shows you how to perform transactions between repository in gola
 This project has no any database migrations, run `./sql/db.sql` manually on your mysql database
 
 ## Test Endpoint
-Import postman collection on `./postman` directory
+Import postman collection from `./postman` directory
 
 ## Example
 This example is taken from person service
